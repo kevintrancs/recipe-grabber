@@ -26,7 +26,7 @@ cd server && python links.py
 Open index.html
 
 ### Demo
-<img src="https://j.gifs.com/rR1XQL.gif" />
+<a href="https://imgflip.com/gif/2g0umu"><img src="https://i.imgflip.com/2g0umu.gif" title="Demo"/></a>
 
 ### Todos:
 - Dockerize and host on gitpages
