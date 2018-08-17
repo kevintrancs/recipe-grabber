@@ -1,0 +1,38 @@
+{
+  "name": "recipe-client",
+  "version": "1.0.0",
+  "description": "Recipe builder, builds recipes",
+  "main": "index.jsx",
+  "scripts": {
+    "build": "webpack -p --progress --config webpack.config.js",
+    "dev-build": "webpack --progress -d --config webpack.config.js",
+    "watch": "webpack --progress -d --config webpack.config.js --watch"
+  },
+  "author": "Kevin Tran",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.11",
+    "extract-text-webpack-plugin": "^2.1.2",
+    "file-loader": "^1.1.11",
+    "react": "^16.4.2",
+    "react-dom": "^16.4.2",
+    "style-loader": "^0.18.2",
+    "url-loader": "^1.0.1",
+    "webpack": "^4.16.5"
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "react"
+    ]
+  },
+  "dependencies": {
+    "react-addons-css-transition-group": "^15.6.2",
+    "react-icons": "^3.0.5",
+    "react-toastify": "^4.1.0"
+  }
+}
