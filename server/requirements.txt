@@ -9,7 +9,7 @@ click==6.7
 cryptography==3.2
 enum34==1.1.6
 Flask==1.0.2
-Flask-Cors==3.0.6
+Flask-Cors==3.0.9
 idna==2.7
 ipaddress==1.0.22
 itsdangerous==0.24
