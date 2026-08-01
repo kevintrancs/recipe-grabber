@@ -1,3 +1,19 @@
-venv3
-*.pyc
-server/node_modules/
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Local configuration
+.env
+
+# Frontend
+client/node_modules/
+client/dist/
+*.tsbuildinfo
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/

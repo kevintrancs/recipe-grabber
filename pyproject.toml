@@ -1,0 +1,35 @@
+[project]
+name = "recipe-grabber"
+version = "2.0.0"
+description = "Turn recipe pages into clean, shareable ingredient lists."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "beautifulsoup4>=4.13,<5",
+    "curl-cffi>=0.13",
+    "flask>=3.1,<4",
+    "recipe-scrapers>=15,<16",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4,<10",
+    "ruff>=0.12,<1",
+]
+
+[tool.uv]
+package = false
+default-groups = ["dev"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+pythonpath = ["server"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+src = ["server"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
