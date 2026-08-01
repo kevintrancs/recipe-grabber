@@ -18,5 +18,6 @@ def test_fallback_parser_preserves_order_and_deduplicates() -> None:
     recipe = extract_recipe(html, "https://recipes.example/salad")
 
     assert recipe.title == "Simple salad"
-    assert recipe.ingredients == ["2 tomatoes", "Olive oil"]
+    assert [item.text for item in recipe.ingredients] == ["2 tomatoes", "Olive oil"]
+    assert [item.name for item in recipe.ingredients] == ["tomatoes", "Olive oil"]
 

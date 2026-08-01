@@ -59,7 +59,6 @@ def normalize_url(value: str) -> str:
 def ensure_public_destination(url: str, *, resolver: Resolver = socket.getaddrinfo) -> str:
     normalized = normalize_url(url)
     parsed = urlsplit(normalized)
-    assert parsed.hostname is not None
 
     default_port = 443 if parsed.scheme == "https" else 80
     try:

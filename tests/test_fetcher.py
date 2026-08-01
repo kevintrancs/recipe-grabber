@@ -142,7 +142,7 @@ def test_robots_disallow_blocks_the_fetch() -> None:
         pages={url: html_page(url)},
     )
 
-    with pytest.raises(FetchError, match="robots.txt") as caught:
+    with pytest.raises(FetchError, match=r"robots\.txt") as caught:
         fetch_html(url, resolver=resolver_for(PUBLIC_IP), session=session)
 
     assert caught.value.code == "blocked_by_robots"
@@ -174,7 +174,7 @@ def test_robots_server_error_refuses_to_guess() -> None:
     url = "https://example.test/recipe/soup"
     session = StubSession(robots_status=503, pages={url: html_page(url)})
 
-    with pytest.raises(FetchError, match="robots.txt could not be read") as caught:
+    with pytest.raises(FetchError, match=r"robots\.txt could not be read") as caught:
         fetch_html(url, resolver=resolver_for(PUBLIC_IP), session=session)
 
     assert caught.value.code == "robots_unavailable"

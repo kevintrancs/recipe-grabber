@@ -15,6 +15,15 @@ function grab(value: string) {
   fireEvent.click(screen.getByRole('button', { name: 'Grab ingredients' }))
 }
 
+/** Mirrors the server: every recipe line carries the food it names. */
+function recipe(title: string, ingredients: [text: string, name: string][]) {
+  return {
+    title,
+    source_url: `https://recipes.example/${title}`,
+    ingredients: ingredients.map(([text, name]) => ({ text, name })),
+  }
+}
+
 afterEach(() => {
   cleanup()
   vi.restoreAllMocks()
@@ -31,49 +40,72 @@ describe('Recipe Grabber', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('imports ingredients and renders the source recipe', async () => {
+  it('lists the food name rather than the recipe line', async () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValue(
-      jsonResponse({
-        title: 'Summer tomatoes',
-        source_url: 'https://recipes.example/tomatoes',
-        ingredients: ['2 ripe tomatoes', '1 tbsp olive oil'],
-      }),
+      jsonResponse(
+        recipe('Summer tomatoes', [
+          ['2 ripe tomatoes', 'tomatoes'],
+          ['1 tbsp olive oil', 'olive oil'],
+        ]),
+      ),
     )
     render(<App />)
 
     grab('https://recipes.example/tomatoes')
 
     await waitFor(() => expect(screen.getByText('Summer tomatoes')).toBeInTheDocument())
-    expect(screen.getByDisplayValue('2 ripe tomatoes')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('tomatoes')).toBeInTheDocument()
+    expect(screen.queryByDisplayValue('2 ripe tomatoes')).not.toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'View original recipe ↗' })).toHaveAttribute(
       'href',
-      'https://recipes.example/tomatoes',
+      'https://recipes.example/Summer tomatoes',
     )
+  })
+
+  it('collapses lines that name the same food onto one row', async () => {
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+      jsonResponse(
+        recipe('Garlic everything', [
+          ['10 cloves garlic, minced', 'garlic'],
+          ['3 cloves roasted garlic', 'garlic'],
+          ['1 red onion', 'red onion'],
+        ]),
+      ),
+    )
+    render(<App />)
+
+    grab('https://recipes.example/garlic')
+
+    await waitFor(() => expect(screen.getByDisplayValue('red onion')).toBeInTheDocument())
+    expect(screen.getAllByDisplayValue('garlic')).toHaveLength(1)
+    expect(screen.getAllByRole('checkbox')).toHaveLength(2)
   })
 
   it('merges a second recipe without duplicating shared ingredients', async () => {
     vi.spyOn(globalThis, 'fetch')
       .mockResolvedValueOnce(
-        jsonResponse({
-          title: 'One',
-          source_url: 'https://recipes.example/one',
-          ingredients: ['2 ripe tomatoes', 'olive oil'],
-        }),
+        jsonResponse(
+          recipe('One', [
+            ['2 ripe tomatoes', 'tomatoes'],
+            ['1 tbsp olive oil', 'olive oil'],
+          ]),
+        ),
       )
       .mockResolvedValueOnce(
-        jsonResponse({
-          title: 'Two',
-          source_url: 'https://recipes.example/two',
-          ingredients: ['Olive   Oil', '1 red onion'],
-        }),
+        jsonResponse(
+          recipe('Two', [
+            ['2 tbsp Olive   Oil', 'Olive   Oil'],
+            ['1 red onion', 'red onion'],
+          ]),
+        ),
       )
     render(<App />)
 
     grab('https://recipes.example/one')
-    await waitFor(() => expect(screen.getByDisplayValue('2 ripe tomatoes')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByDisplayValue('tomatoes')).toBeInTheDocument())
 
     grab('https://recipes.example/two')
-    await waitFor(() => expect(screen.getByDisplayValue('1 red onion')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByDisplayValue('red onion')).toBeInTheDocument())
 
     // Differing case and whitespace still count as the same ingredient.
     expect(screen.getAllByDisplayValue(/olive oil/i)).toHaveLength(1)

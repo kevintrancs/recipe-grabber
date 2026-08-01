@@ -4,9 +4,9 @@ import type { FormEvent } from 'react'
 import { importRecipe } from './api'
 import type { ImportResponse, Ingredient, Notice } from './types'
 
-function makeIngredient(text: string): Ingredient {
+function makeIngredient(name: string): Ingredient {
   const id = globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`
-  return { id, text, checked: false }
+  return { id, name, checked: false }
 }
 
 function normalizeText(value: string): string {
@@ -27,17 +27,18 @@ export default function App() {
 
   const remainingCount = ingredients.filter((ingredient) => !ingredient.checked).length
 
-  // Case-insensitive merge: re-importing a recipe never duplicates what is already listed.
-  function mergeIngredients(values: string[]) {
+  // Merge on the food name, so "10 cloves garlic, minced" and "3 cloves roasted garlic"
+  // both land on one "garlic" row.
+  function mergeIngredients(names: string[]) {
     setIngredients((current) => {
-      const seen = new Set(current.map((item) => normalizeText(item.text).toLocaleLowerCase()))
+      const seen = new Set(current.map((item) => normalizeText(item.name).toLocaleLowerCase()))
       const additions: Ingredient[] = []
-      for (const rawValue of values) {
-        const value = normalizeText(rawValue)
-        const key = value.toLocaleLowerCase()
-        if (value && !seen.has(key)) {
+      for (const rawName of names) {
+        const name = normalizeText(rawName)
+        const key = name.toLocaleLowerCase()
+        if (name && !seen.has(key)) {
           seen.add(key)
-          additions.push(makeIngredient(value))
+          additions.push(makeIngredient(name))
         }
       }
       return [...current, ...additions]
@@ -64,7 +65,7 @@ export default function App() {
     try {
       const response = await importRecipe(value)
       const count = response.ingredients.length
-      mergeIngredients(response.ingredients)
+      mergeIngredients(response.ingredients.map((item) => item.name))
       setRecipe(response)
       setEntry('')
       setNotice({
@@ -79,9 +80,9 @@ export default function App() {
     }
   }
 
-  function updateIngredient(id: string, text: string) {
+  function updateIngredient(id: string, name: string) {
     setIngredients((current) =>
-      current.map((ingredient) => (ingredient.id === id ? { ...ingredient, text } : ingredient)),
+      current.map((ingredient) => (ingredient.id === id ? { ...ingredient, name } : ingredient)),
     )
   }
 
@@ -98,7 +99,7 @@ export default function App() {
   }
 
   function listText(): string {
-    return ingredients.map((ingredient) => `• ${normalizeText(ingredient.text)}`).join('\n')
+    return ingredients.map((ingredient) => `• ${normalizeText(ingredient.name)}`).join('\n')
   }
 
   async function copyList() {
@@ -198,19 +199,19 @@ export default function App() {
                         type="checkbox"
                         checked={ingredient.checked}
                         onChange={() => toggleIngredient(ingredient.id)}
-                        aria-label={`Mark ${ingredient.text} as ${ingredient.checked ? 'needed' : 'collected'}`}
+                        aria-label={`Mark ${ingredient.name} as ${ingredient.checked ? 'needed' : 'collected'}`}
                       />
                       <input
                         className="ingredient-input"
-                        value={ingredient.text}
+                        value={ingredient.name}
                         onChange={(event) => updateIngredient(ingredient.id, event.target.value)}
-                        aria-label={`Edit ${ingredient.text}`}
+                        aria-label={`Edit ${ingredient.name}`}
                       />
                       <button
                         className="icon-button"
                         type="button"
                         onClick={() => removeIngredient(ingredient.id)}
-                        aria-label={`Remove ${ingredient.text}`}
+                        aria-label={`Remove ${ingredient.name}`}
                       >
                         ×
                       </button>

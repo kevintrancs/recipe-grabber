@@ -41,14 +41,17 @@ def test_health(client) -> None:
     assert response.get_json() == {"status": "ok"}
 
 
-def test_scrape_returns_ordered_structured_ingredients(client) -> None:
+def test_scrape_returns_ordered_named_ingredients(client) -> None:
     response = client.post("/api/scrape", json={"url": "https://recipes.example/toast"})
 
     assert response.status_code == 200
     assert response.get_json() == {
         "title": "Tomato Toast",
         "source_url": "https://recipes.example/toast",
-        "ingredients": ["2 ripe tomatoes", "1 tbsp olive oil"],
+        "ingredients": [
+            {"text": "2 ripe tomatoes", "name": "ripe tomatoes"},
+            {"text": "1 tbsp olive oil", "name": "olive oil"},
+        ],
     }
 
 
