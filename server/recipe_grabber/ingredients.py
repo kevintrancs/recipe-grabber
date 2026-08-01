@@ -1,16 +1,8 @@
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 
-# NLTK 3.10 refuses to import its own dependencies when they resolve inside the working
-# directory, which is every one of them once .venv lives in the project. It blocked even
-# stdlib `locale` in testing, and PYTHONSAFEPATH does not turn it off. setdefault leaves
-# the choice overridable from the environment.
-# ponytail: revisit when NLTK ships a fix; 3.10.1 is the newest release.
-os.environ.setdefault("NLTK_DISABLE_IMPORT_SECURITY", "1")
-
-from ingredient_parser import parse_ingredient  # must follow the line above
+from ingredient_parser import parse_ingredient
 
 
 @dataclass(frozen=True, slots=True)

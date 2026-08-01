@@ -34,6 +34,10 @@ def client():
     return app.test_client()
 
 
+def test_debug_is_disabled_by_default() -> None:
+    assert create_app().debug is False
+
+
 def test_health(client) -> None:
     response = client.get("/api/health")
 

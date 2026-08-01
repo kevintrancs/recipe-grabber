@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import os
 from collections.abc import Mapping
 from dataclasses import asdict
 from pathlib import Path
@@ -33,7 +32,7 @@ def create_app(config: Mapping[str, Any] | None = None) -> Flask:
 
     app = Flask(__name__, static_folder=None)
     app.config.from_mapping(
-        DEBUG=os.getenv("RECIPE_GRABBER_ENV", "development").lower() == "development",
+        DEBUG=False,
         MAX_CONTENT_LENGTH=4_096,
         FETCH_HTML=None,
     )
