@@ -136,9 +136,9 @@ export default function App() {
       <main>
         <section className="hero" aria-labelledby="hero-title">
           <p className="eyebrow">Recipe to grocery list</p>
-          <h1 id="hero-title">Skip the life story.<br />Grab the ingredients.</h1>
+          <h1 id="hero-title">Pls cook more<br />Easily fetch ingredients</h1>
           <p className="hero-copy">
-            Paste a recipe link and get a clean, editable checklist—or add an item yourself.
+            Paste a recipe link and get a list of ingredients. Or just add your own, but don't do that.
           </p>
 
           <form className="grabber-form" onSubmit={handleAdd}>
@@ -186,7 +186,7 @@ export default function App() {
             {ingredients.length === 0 ? (
               <div className="empty-state">
                 <div className="empty-illustration" aria-hidden="true">🥕</div>
-                <h3>Your list is hungry</h3>
+                <h3>Your add is $0</h3>
                 <p>Paste a recipe above or add your first grocery item.</p>
               </div>
             ) : (
