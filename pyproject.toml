@@ -10,7 +10,7 @@ dependencies = [
     "flask>=3.1,<4",
     "ingredient-parser-nlp>=2.7,<3",
     # NLTK 3.10's import guard treats uv's project-local .venv as untrusted application code.
-    "nltk>=3.9.4,<3.10",
+    "nltk>=3.9.4,<3.11",
     "recipe-scrapers>=15,<16",
 ]
 
